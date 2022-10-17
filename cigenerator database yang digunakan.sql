@@ -56,19 +56,22 @@ DROP TABLE IF EXISTS `biaya_operasional_cabang`;
 
 CREATE TABLE `biaya_operasional_cabang` (
   `biaya_operasional_id` int(11) NOT NULL AUTO_INCREMENT,
-  `nama_operasional` varchar(500) DEFAULT NULL,
+  `catatan_biaya` varchar(500) DEFAULT NULL,
   `tanggal` datetime DEFAULT NULL,
   `nominal` int(11) DEFAULT NULL,
   `id_users_bendahara` int(11) DEFAULT NULL,
+  `id_users_adminresto` int(11) DEFAULT NULL,
   `resto_id` int(11) DEFAULT NULL,
   `kas_id` int(11) DEFAULT NULL,
+  `status` enum('diberikan','belum diberikan') DEFAULT NULL,
   PRIMARY KEY (`biaya_operasional_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `biaya_operasional_cabang` */
 
-insert  into `biaya_operasional_cabang`(`biaya_operasional_id`,`nama_operasional`,`tanggal`,`nominal`,`id_users_bendahara`,`resto_id`,`kas_id`) values 
-(2,'Beli wajan','2022-10-15 12:00:00',15000,8,11,6);
+insert  into `biaya_operasional_cabang`(`biaya_operasional_id`,`catatan_biaya`,`tanggal`,`nominal`,`id_users_bendahara`,`id_users_adminresto`,`resto_id`,`kas_id`,`status`) values 
+(3,'pemberian dana 1','2022-10-17 12:00:00',1000000,8,3,23,6,'belum diberikan'),
+(4,'pengajuan dana 1','2022-10-17 12:00:00',1000000,8,3,23,6,'belum diberikan');
 
 /*Table structure for table `biaya_operasional_kanwil` */
 
@@ -89,6 +92,27 @@ CREATE TABLE `biaya_operasional_kanwil` (
 
 insert  into `biaya_operasional_kanwil`(`biaya_operasional_id`,`nama_operasional`,`tanggal`,`nominal`,`id_users_bendahara`,`kanwil_id`,`kas_id`) values 
 (3,'Bensin','2022-10-15 12:00:00',5000,8,1,5);
+
+/*Table structure for table `detial_pemesanan_masakan` */
+
+DROP TABLE IF EXISTS `detial_pemesanan_masakan`;
+
+CREATE TABLE `detial_pemesanan_masakan` (
+  `detail_pemesanan_masakan_id` int(11) NOT NULL AUTO_INCREMENT,
+  `pemesanan_masakan_id` varchar(500) DEFAULT NULL,
+  `menu_masakan_id` int(11) DEFAULT NULL,
+  `tanggal` datetime DEFAULT NULL,
+  `harga` varchar(500) DEFAULT NULL,
+  `jumlah_pesan` int(11) DEFAULT NULL,
+  `subtotal` int(11) DEFAULT NULL,
+  `status` enum('dipesan','pemesanan selesai') DEFAULT NULL,
+  PRIMARY KEY (`detail_pemesanan_masakan_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
+
+/*Data for the table `detial_pemesanan_masakan` */
+
+insert  into `detial_pemesanan_masakan`(`detail_pemesanan_masakan_id`,`pemesanan_masakan_id`,`menu_masakan_id`,`tanggal`,`harga`,`jumlah_pesan`,`subtotal`,`status`) values 
+(4,'1',1,'0000-00-00 00:00:00','11',1,11,'dipesan');
 
 /*Table structure for table `gaji` */
 
@@ -141,15 +165,16 @@ CREATE TABLE `investor` (
   `nama_investor` varchar(100) DEFAULT NULL,
   `alamat_investor` varchar(100) DEFAULT NULL,
   `telp_investor` varchar(12) DEFAULT NULL,
+  `id_users_owner` int(11) DEFAULT NULL,
   PRIMARY KEY (`investor_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 
 /*Data for the table `investor` */
 
-insert  into `investor`(`investor_id`,`nama_investor`,`alamat_investor`,`telp_investor`) values 
-(1,'fauzin','fauzin','0965876675'),
-(3,'kjdsk','sjkdmk','32832424'),
-(4,'sadaddddd','asdsa','33344444');
+insert  into `investor`(`investor_id`,`nama_investor`,`alamat_investor`,`telp_investor`,`id_users_owner`) values 
+(1,'fauzin','fauzin','0965876675',NULL),
+(3,'kjdsk','sjkdmk','32832424',NULL),
+(4,'sadaddddd','asdsa','33344444',NULL);
 
 /*Table structure for table `kanwil` */
 
@@ -185,9 +210,48 @@ CREATE TABLE `kas` (
 
 insert  into `kas`(`kas_id`,`nama_kas`,`saldo`) values 
 (2,'Kas Kecil',0),
-(4,'Kas Investor',0),
+(4,'Kas Investor',5000000),
 (5,'Kas Bendahara',0),
-(6,'KAS CABANG',1000000);
+(6,'KAS CABANG',2000000);
+
+/*Table structure for table `menu_masakan` */
+
+DROP TABLE IF EXISTS `menu_masakan`;
+
+CREATE TABLE `menu_masakan` (
+  `menu_masakan_id` int(11) NOT NULL AUTO_INCREMENT,
+  `nama_masakan` varchar(500) DEFAULT NULL,
+  `stok` int(11) DEFAULT NULL,
+  `gambar` varchar(500) DEFAULT NULL,
+  `harga` varchar(500) DEFAULT NULL,
+  `id_users` int(11) DEFAULT NULL,
+  PRIMARY KEY (`menu_masakan_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4;
+
+/*Data for the table `menu_masakan` */
+
+insert  into `menu_masakan`(`menu_masakan_id`,`nama_masakan`,`stok`,`gambar`,`harga`,`id_users`) values 
+(10,'1',1,'cctv.png',NULL,1),
+(11,'1',1,'banner3.jpeg',NULL,1),
+(12,'1',1,'cctv1.png','5000',12),
+(15,'1',1,'covidtracker.png','1',16);
+
+/*Table structure for table `pemesanan_masakan` */
+
+DROP TABLE IF EXISTS `pemesanan_masakan`;
+
+CREATE TABLE `pemesanan_masakan` (
+  `pemesanan_maakan_id` int(11) NOT NULL AUTO_INCREMENT,
+  `no_antrian` varchar(500) DEFAULT NULL,
+  `nama_pembeli` varchar(500) DEFAULT NULL,
+  `id_users_waiter` int(11) DEFAULT NULL,
+  PRIMARY KEY (`pemesanan_maakan_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
+
+/*Data for the table `pemesanan_masakan` */
+
+insert  into `pemesanan_masakan`(`pemesanan_maakan_id`,`no_antrian`,`nama_pembeli`,`id_users_waiter`) values 
+(1,'1','abid',16);
 
 /*Table structure for table `pengadaan_bahan_mentah` */
 
@@ -225,6 +289,47 @@ CREATE TABLE `pengadaan_peralatan` (
 insert  into `pengadaan_peralatan`(`pengadaan_peralatan_id`,`peralatan_id`,`tanggal`,`harga`,`id_users_logistik`) values 
 (2,'Wajan','2022-10-16 12:00:00','50000',10),
 (3,'1','2022-10-16 12:00:00','50000',10);
+
+/*Table structure for table `pengeluran_biaya_operasional_cabang` */
+
+DROP TABLE IF EXISTS `pengeluran_biaya_operasional_cabang`;
+
+CREATE TABLE `pengeluran_biaya_operasional_cabang` (
+  `biaya_operasional_id` int(11) NOT NULL AUTO_INCREMENT,
+  `nama_operasional` varchar(500) DEFAULT NULL,
+  `tanggal` datetime DEFAULT NULL,
+  `harga` int(11) DEFAULT NULL,
+  `id_users_adminresto` int(11) DEFAULT NULL,
+  `resto_id` int(11) DEFAULT NULL,
+  `kas_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`biaya_operasional_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
+
+/*Data for the table `pengeluran_biaya_operasional_cabang` */
+
+insert  into `pengeluran_biaya_operasional_cabang`(`biaya_operasional_id`,`nama_operasional`,`tanggal`,`harga`,`id_users_adminresto`,`resto_id`,`kas_id`) values 
+(2,'Beli wajan','2022-10-15 12:00:00',15000,8,11,6);
+
+/*Table structure for table `pengembalian_kas_investor` */
+
+DROP TABLE IF EXISTS `pengembalian_kas_investor`;
+
+CREATE TABLE `pengembalian_kas_investor` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `tanggal` varchar(500) DEFAULT NULL,
+  `nominal` bigint(255) DEFAULT NULL,
+  `id_users` int(11) DEFAULT NULL,
+  `investor_id` int(11) DEFAULT NULL,
+  `kas_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=latin1;
+
+/*Data for the table `pengembalian_kas_investor` */
+
+insert  into `pengembalian_kas_investor`(`id`,`tanggal`,`nominal`,`id_users`,`investor_id`,`kas_id`) values 
+(16,'2022-10-17 12:00:00',100000,1,14,4),
+(17,'2022-10-17 12:00:00',1000000,1,14,4),
+(18,'2022-10-17 12:00:00',10,1,14,4);
 
 /*Table structure for table `pengiriman_bahan_olahan` */
 
@@ -348,7 +453,7 @@ CREATE TABLE `tbl_hak_akses` (
   `id_user_level` int(11) NOT NULL,
   `id_menu` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=66 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=78 DEFAULT CHARSET=latin1;
 
 /*Data for the table `tbl_hak_akses` */
 
@@ -393,7 +498,19 @@ insert  into `tbl_hak_akses`(`id`,`id_user_level`,`id_menu`) values
 (62,6,39),
 (63,2,40),
 (64,6,41),
-(65,6,42);
+(65,6,42),
+(66,2,43),
+(67,2,44),
+(68,2,45),
+(69,8,1),
+(70,8,46),
+(71,1,47),
+(72,8,48),
+(73,7,49),
+(74,7,50),
+(75,9,1),
+(76,9,51),
+(77,9,52);
 
 /*Table structure for table `tbl_menu` */
 
@@ -401,13 +518,13 @@ DROP TABLE IF EXISTS `tbl_menu`;
 
 CREATE TABLE `tbl_menu` (
   `id_menu` int(11) NOT NULL AUTO_INCREMENT,
-  `title` varchar(50) NOT NULL,
-  `url` varchar(30) NOT NULL,
-  `icon` varchar(30) NOT NULL,
+  `title` varchar(500) NOT NULL,
+  `url` varchar(300) NOT NULL,
+  `icon` varchar(300) NOT NULL,
   `is_main_menu` int(11) NOT NULL,
   `is_aktif` enum('y','n') NOT NULL COMMENT 'y=yes,n=no',
   PRIMARY KEY (`id_menu`)
-) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=53 DEFAULT CHARSET=latin1;
 
 /*Data for the table `tbl_menu` */
 
@@ -425,12 +542,12 @@ insert  into `tbl_menu`(`id_menu`,`title`,`url`,`icon`,`is_main_menu`,`is_aktif`
 (20,'Gaji','gaji','fa fa-id-card',0,'y'),
 (21,'Investasi','investasi','fa fa-id-card',0,'y'),
 (22,'Welcome','welcome','fa fa-id-card',0,'y'),
-(23,'Investasi','investasi_generalmanager','fa fa-id-card',0,'y'),
+(23,'Pengeluaran Investasi Cb','investasi_generalmanager','fa fa-id-card',0,'y'),
 (25,'KAS','kas','fa fa-id-card',0,'y'),
 (26,'KAS','kas','fa fa-id-card',0,'y'),
 (27,'KAS','kas','fa fa-id-card',0,'y'),
-(28,'Biaya Op Cabang','biaya_operasional_cabang','fa fa-id-card',0,'y'),
-(29,'Biaya Op Kanwil','biaya_operasional_kanwil','fa fa-id-card',0,'y'),
+(28,'Pemberian Biaya Op Cb','Pemberian_biaya_operasional_cabang','fa fa-id-card',0,'y'),
+(29,'Pengeluaran Biaya Op Kwl','biaya_operasional_kanwil','fa fa-id-card',0,'y'),
 (30,'Laporan KAS Cabang','laporan_kas_cabang','fa fa-id-card',0,'y'),
 (31,'Setoran kasir','setoran_kasir','fa fa-id-card',0,'y'),
 (32,'Laporan LABA RUGI','laporan_laba_rugi','fa fa-id-card',0,'y'),
@@ -440,9 +557,19 @@ insert  into `tbl_menu`(`id_menu`,`title`,`url`,`icon`,`is_main_menu`,`is_aktif`
 (37,'Pengadaan B. Mentah','pengadaan_bahan_mentah','fa fa-id-card',0,'y'),
 (38,'Entri bahan Olahan','bahan_olahan','fa fa-id-card',0,'y'),
 (39,'Pengiriman bahan olahan','pengiriman_bahan_olahan','fa fa-id-card',0,'y'),
-(40,'Entri Pengeluaran Biaya Op','pengeluaran_operasional_cabang','fa fa-id-card',0,'y'),
+(40,'Entri Pengeluaran Biaya Op','pengeluran_biaya_operasional_cabang','fa fa-id-card',0,'y'),
 (41,'Peralatan','peralatan','fa fa-id-card',0,'y'),
-(42,'Pengiriman Peralatan','pengiriman_peralatan','fa fa-id-card',0,'y');
+(42,'Pengiriman Peralatan','pengiriman_peralatan','fa fa-id-card',0,'y'),
+(43,'Permintaan peralatan','permintaan_peralatan','fa fa-id-card',0,'y'),
+(44,'Pengajuan Biaya Op CB','Pengajuan_biaya_operasional_cabang','fa fa-id-card',0,'y'),
+(45,'Entri permintaan BO','permintaan_bahan_olahan','fa fa-id-card',0,'y'),
+(46,'Laporan Investasi','Laporan_investasi','fa fa-id-card',0,'y'),
+(47,'Kembali Modal Investor','pengembalian_kas_investor','fa fa-id-card',0,'y'),
+(48,'Kembali Modal Investor','pengembalian_modal_investor','fa fa-id-card',0,'y'),
+(49,'Permintaan bahan olahan','permintaan_bahan_olahan','fa fa-id-card',0,'y'),
+(50,'Menu Masakan','menu_masakan','fa fa-id-card',0,'y'),
+(51,'Daftar Menu Masakan','Daftar_menu_masakan','fa fa-id-card',0,'y'),
+(52,'Pemesan masakan','pemesanan_masakan','fa fa-id-card',0,'y');
 
 /*Table structure for table `tbl_setting` */
 
@@ -473,7 +600,7 @@ CREATE TABLE `tbl_user` (
   `id_user_level` int(11) NOT NULL,
   `is_aktif` enum('y','n') NOT NULL,
   PRIMARY KEY (`id_users`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=latin1;
 
 /*Data for the table `tbl_user` */
 
@@ -484,7 +611,9 @@ insert  into `tbl_user`(`id_users`,`full_name`,`email`,`password`,`images`,`id_u
 (8,'debi','debi@gmail.com','123456','atomix_user31.png',4,'y'),
 (9,'irhas','irhas@gmail.com','123456','atomix_user31.png',5,'y'),
 (10,'wahyu','wahyu@gmail.com','123456','atomix_user31.png',6,'y'),
-(12,'mansyur','mansyur@gmail.com','123456','atomix_user31.png',7,'y');
+(12,'mansyur','mansyur@gmail.com','123456','atomix_user31.png',7,'y'),
+(14,'arta','arta@gmail.com','123456','atomix_user31.png',8,'y'),
+(16,'nisa','nisa@gmail.com','123456','atomix_user31.png',9,'y');
 
 /*Table structure for table `tbl_user_level` */
 
@@ -494,7 +623,7 @@ CREATE TABLE `tbl_user_level` (
   `id_user_level` int(11) NOT NULL AUTO_INCREMENT,
   `nama_level` varchar(30) NOT NULL,
   PRIMARY KEY (`id_user_level`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
 
 /*Data for the table `tbl_user_level` */
 
@@ -505,7 +634,9 @@ insert  into `tbl_user_level`(`id_user_level`,`nama_level`) values
 (4,'bendahara'),
 (5,'kasir'),
 (6,'logistik'),
-(7,'produksi');
+(7,'produksi'),
+(8,'owner'),
+(9,'waiter');
 
 /*Table structure for table `transaksi_kas_investor` */
 
@@ -519,12 +650,14 @@ CREATE TABLE `transaksi_kas_investor` (
   `investor_id` int(11) DEFAULT NULL,
   `kas_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=latin1;
 
 /*Data for the table `transaksi_kas_investor` */
 
 insert  into `transaksi_kas_investor`(`id`,`tanggal`,`nominal`,`id_users`,`investor_id`,`kas_id`) values 
-(15,'2022-10-14 20:10:41',50,1,1,2);
+(15,'2022-10-14 20:10:41',50,1,1,2),
+(16,'2022-10-17 12:00:00',5000000,1,14,4),
+(17,'2022-10-17 12:00:00',1000000,1,14,6);
 
 /* Trigger structure for table `gaji` */
 
