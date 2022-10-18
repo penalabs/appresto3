@@ -14,6 +14,21 @@ function cmb_dinamis($name,$table,$field,$pk,$selected=null,$order=null){
     $cmb .="</select>";
     return $cmb;  
 }
+function cmb_dinamis2($name,$id,$table,$field,$pk,$selected=null,$order=null){
+    $ci = get_instance();
+    $cmb = "<select name='$name' class='form-control' id='$id'>";
+    if($order){
+        $ci->db->order_by($field,$order);
+    }
+    $data = $ci->db->get($table)->result();
+    foreach ($data as $d){
+        $cmb .="<option value='".$d->$pk."'";
+        $cmb .= $selected==$d->$pk?" selected='selected'":'';
+        $cmb .=">".  strtoupper($d->$field)."</option>";
+    }
+    $cmb .="</select>";
+    return $cmb;  
+}
 
 function cmb_dinamis_investasi_user($name,$table,$where,$field,$pk,$selected=null,$order=null){
     $ci = get_instance();

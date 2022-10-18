@@ -17,7 +17,7 @@ class Pemesanan_masakan_model extends CI_Model
 
     // datatables
     function json() {
-        $this->datatables->select('pemesanan_maakan_id,no_antrian,nama_pembeli,full_name as nama_waiter');
+        $this->datatables->select('pemesanan_maakan_id,no_antrian,nama_pembeli,total,full_name as nama_waiter');
         $this->datatables->from('pemesanan_masakan');
         
         //add this line for join

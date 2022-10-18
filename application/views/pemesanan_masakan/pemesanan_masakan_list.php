@@ -19,6 +19,7 @@
                     <th width="30px">No</th>
 		    <th>No Antrian</th>
 		    <th>Nama Pembeli</th>
+            <th>Total</th>
 		    <th>Id Users Waiter</th>
 		    <th width="200px">Action</th>
                 </tr>
@@ -70,7 +71,7 @@
                         {
                             "data": "pemesanan_maakan_id",
                             "orderable": false
-                        },{"data": "no_antrian"},{"data": "nama_pembeli"},{"data": "nama_waiter"},
+                        },{"data": "no_antrian"},{"data": "nama_pembeli"},{"data": "total"},{"data": "nama_waiter"},
                         {
                             "data" : "action",
                             "orderable": false,

@@ -17,7 +17,9 @@
 					</tr>
 	
 					<tr>
-						<td width='200'>Gambar <?php echo form_error('gambar') ?></td><td><input type="text" class="form-control" name="gambar" id="gambar" placeholder="Gambar" value="<?php echo $gambar; ?>" /></td>
+						<td width='200'>Gambar <?php echo form_error('gambar') ?></td><td>
+							<input type="file" class="form-control" name="gambar" id="gambar" />
+						</td>
 					</tr>
 	
 					<tr>
@@ -25,7 +27,7 @@
 					</tr>
 	
 					<tr>
-						<td width='200'>Id Users <?php echo form_error('id_users') ?></td><td><input type="text" class="form-control" name="id_users" id="id_users" placeholder="Id Users" value="<?php echo $id_users; ?>" /></td>
+						<td><input type="hidden" class="form-control" name="id_users" id="id_users" placeholder="Id Users" value="<?php echo $this->session->userdata('id_users'); ?>" /></td>
 					</tr>
 	
 					<tr>

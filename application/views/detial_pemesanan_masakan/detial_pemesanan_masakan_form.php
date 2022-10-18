@@ -16,7 +16,7 @@
 					<tr>
 						<td width='200'>Menu Masakan Id <?php echo form_error('menu_masakan_id') ?></td>
 						<td>
-						<?php echo cmb_dinamis('menu_masakan_id', 'menu_masakan', 'nama_masakan', 'menu_masakan_id', $menu_masakan_id,'DESC') ?>
+						<?php echo cmb_dinamis2('menu_masakan_id','menu_masakan_id', 'menu_masakan', 'nama_masakan', 'menu_masakan_id', $menu_masakan_id,'DESC') ?>
 
 						</td>
 					</tr>
@@ -38,7 +38,7 @@
 					</tr>
 	
 					<tr>
-						<td><input type="hidden" class="form-control" name="status" id="status" placeholder="Status" value="<?php echo $status; ?>" /></td>
+						<td><input type="hidden" class="form-control" name="status" id="status" placeholder="Status" value="dipesan" /></td>
 					</tr>
 	
 					<tr>
@@ -62,9 +62,31 @@ $('#tanggal').datetimepicker({
 </script>
 <script>
 	$( document ).ready(function() {
-    	$("#harga").change(function(){
-		var harga=$(this).val();
-		alert(harga);
+		$('#menu_masakan_id').on('change', function() {
+		//alert( this.value );
+
+				$.ajax({
+						url: '<?php echo base_url();?>index.php/detial_pemesanan_masakan/get_harga',
+						type: 'POST',
+						dataType: 'json',
+						data: { 
+								'menu_masakan_id':  this.value, 
+							},
+						success: function(response){
+							console.log(response);
+
+
+							//alert(response.harga)
+							$("#harga").val(response.harga);
+						}
+		
+					});
+
+		});
+
+		$('#jumlah_pesan').on('change', function() {
+			var subtotal=$("#harga").val()*this.value;
+			$("#subtotal").val(subtotal);
 		});
 	});
 	

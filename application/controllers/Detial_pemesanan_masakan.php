@@ -10,6 +10,7 @@ class Detial_pemesanan_masakan extends CI_Controller
         parent::__construct();
         
         $this->load->model('Detial_pemesanan_masakan_model');
+        $this->load->model('Pemesanan_masakan_model');
         $this->load->library('form_validation');        
 	$this->load->library('datatables');
     }
@@ -27,6 +28,16 @@ class Detial_pemesanan_masakan extends CI_Controller
         header('Content-Type: application/json');
         $pemesanan_masakan_id=$this->input->post('pemesanan_masakan_id',TRUE);
         echo $this->Detial_pemesanan_masakan_model->json($pemesanan_masakan_id);
+    }
+
+    public function get_harga(){
+        $menu_masakan_id=$this->input->post('menu_masakan_id',TRUE);
+        $sql="Select * from menu_masakan where menu_masakan_id='$menu_masakan_id'";    
+        $query = $this->db->query($sql);
+        $hasil=$query->row_array();
+        echo json_encode($hasil);
+
+       
     }
 
     public function read($id) 
@@ -64,6 +75,11 @@ class Detial_pemesanan_masakan extends CI_Controller
 	    'subtotal' => set_value('subtotal'),
 	    'status' => set_value('status'),
 	);
+
+
+
+        
+
         $this->template->load('template','detial_pemesanan_masakan/detial_pemesanan_masakan_form', $data);
     }
     
@@ -84,8 +100,26 @@ class Detial_pemesanan_masakan extends CI_Controller
 		'status' => $this->input->post('status',TRUE),
 	    );
 
+        
+
+
+
             $this->Detial_pemesanan_masakan_model->insert($data);
             $this->session->set_flashdata('message', 'Create Record Success 2');
+
+            $menu_masakan_id=$this->input->post('menu_masakan_id',TRUE);
+            $sql="Select SUM(subtotal) as subtotal from detial_pemesanan_masakan where menu_masakan_id='$menu_masakan_id'";    
+            $query = $this->db->query($sql);
+            $hasil=$query->row();
+
+            $data2 = array(
+                'total' => $hasil->subtotal,
+            );
+
+
+            $this->Pemesanan_masakan_model->update($this->input->post('pemesanan_masakan_id', TRUE), $data2);
+            $this->session->set_flashdata('message', 'Update Record Success');
+        
 
             $pemesanan_masakan_id=$this->session->userdata('pemesanan_masakan_id');
             redirect(site_url('detial_pemesanan_masakan/index/'.$pemesanan_masakan_id));
@@ -135,6 +169,20 @@ class Detial_pemesanan_masakan extends CI_Controller
 	    );
 
             $this->Detial_pemesanan_masakan_model->update($this->input->post('detail_pemesanan_masakan_id', TRUE), $data);
+            $this->session->set_flashdata('message', 'Update Record Success');
+            
+
+            $menu_masakan_id=$this->input->post('menu_masakan_id',TRUE);
+            $sql="Select SUM(subtotal) as subtotal from detial_pemesanan_masakan where menu_masakan_id='$menu_masakan_id'";    
+            $query = $this->db->query($sql);
+            $hasil=$query->row();
+
+            $data2 = array(
+                'total' => $hasil->subtotal,
+            );
+
+
+            $this->Pemesanan_masakan_model->update($this->input->post('pemesanan_masakan_id', TRUE), $data2);
             $this->session->set_flashdata('message', 'Update Record Success');
 
             $pemesanan_masakan_id=$this->session->userdata('pemesanan_masakan_id');

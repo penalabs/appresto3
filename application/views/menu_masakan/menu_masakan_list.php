@@ -72,7 +72,11 @@
                         {
                             "data": "menu_masakan_id",
                             "orderable": false
-                        },{"data": "nama_masakan"},{"data": "stok"},{"data": "gambar"},{"data": "harga"},{"data": "id_users"},
+                        },{"data": "nama_masakan"},{"data": "stok"},{"data": "gambar",
+                            "render": function (data, type, row, meta) {
+                                return '<img src="<?php echo base_url();?>/uploads/images/' + data + '" alt="' + data + '"height="100" width="100"/>';
+                            }
+                        },{"data": "harga"},{"data": "nama_waiter"},
                         {
                             "data" : "action",
                             "orderable": false,

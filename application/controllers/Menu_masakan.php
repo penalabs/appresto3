@@ -62,13 +62,32 @@ class Menu_masakan extends CI_Controller
     {
         $this->_rules();
 
-        if ($this->form_validation->run() == FALSE) {
-            $this->create();
-        } else {
+        
+
+            $gambar="";
+            if(!empty($_FILES['gambar']['name'])){
+                $config['upload_path'] = 'uploads/images/';
+                $config['allowed_types'] = 'jpg|jpeg|png|gif';
+                $config['file_name'] = $_FILES['gambar']['name'];
+                
+                //Load upload library and initialize here configuration
+                $this->load->library('upload',$config);
+                $this->upload->initialize($config);
+                
+                if($this->upload->do_upload('gambar')){
+                    $uploadData = $this->upload->data();
+                    $gambar = $uploadData['file_name'];
+                }else{
+                    $gambar = '';
+                }
+            }else{
+                $gambar = '';
+            }
+
             $data = array(
 		'nama_masakan' => $this->input->post('nama_masakan',TRUE),
 		'stok' => $this->input->post('stok',TRUE),
-		'gambar' => $this->input->post('gambar',TRUE),
+		'gambar' => $gambar,
 		'harga' => $this->input->post('harga',TRUE),
 		'id_users' => $this->input->post('id_users',TRUE),
 	    );
@@ -105,13 +124,31 @@ class Menu_masakan extends CI_Controller
     {
         $this->_rules();
 
-        if ($this->form_validation->run() == FALSE) {
-            $this->update($this->input->post('menu_masakan_id', TRUE));
-        } else {
+
+            $gambar="";
+            if(!empty($_FILES['gambar']['name'])){
+                $config['upload_path'] = 'uploads/images/';
+                $config['allowed_types'] = 'jpg|jpeg|png|gif';
+                $config['file_name'] = $_FILES['gambar']['name'];
+                
+                //Load upload library and initialize here configuration
+                $this->load->library('upload',$config);
+                $this->upload->initialize($config);
+                
+                if($this->upload->do_upload('gambar')){
+                    $uploadData = $this->upload->data();
+                    $gambar = $uploadData['file_name'];
+                }else{
+                    $gambar = '';
+                }
+            }else{
+                $gambar = '';
+            }
+
             $data = array(
 		'nama_masakan' => $this->input->post('nama_masakan',TRUE),
 		'stok' => $this->input->post('stok',TRUE),
-		'gambar' => $this->input->post('gambar',TRUE),
+		'gambar' => $gambar,
 		'harga' => $this->input->post('harga',TRUE),
 		'id_users' => $this->input->post('id_users',TRUE),
 	    );
@@ -119,7 +156,7 @@ class Menu_masakan extends CI_Controller
             $this->Menu_masakan_model->update($this->input->post('menu_masakan_id', TRUE), $data);
             $this->session->set_flashdata('message', 'Update Record Success');
             redirect(site_url('menu_masakan'));
-        }
+        
     }
     
     public function delete($id) 
