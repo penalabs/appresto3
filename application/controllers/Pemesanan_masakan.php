@@ -21,6 +21,11 @@ class Pemesanan_masakan extends CI_Controller
     
     public function json() {
         header('Content-Type: application/json');
+
+
+
+
+
         echo $this->Pemesanan_masakan_model->json();
     }
 

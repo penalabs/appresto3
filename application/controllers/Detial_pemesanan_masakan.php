@@ -182,7 +182,7 @@ class Detial_pemesanan_masakan extends CI_Controller
             );
 
 
-            $this->Pemesanan_masakan_model->update($this->input->post('pemesanan_masakan_id', TRUE), $data2);
+            $this->Pemesanan_masakan_model->update($this->input->post('pemesanan_maakan_id', TRUE), $data2);
             $this->session->set_flashdata('message', 'Update Record Success');
 
             $pemesanan_masakan_id=$this->session->userdata('pemesanan_masakan_id');
@@ -280,6 +280,31 @@ class Detial_pemesanan_masakan extends CI_Controller
         );
         
         $this->load->view('detial_pemesanan_masakan/detial_pemesanan_masakan_doc',$data);
+    }
+
+    public function status_dipesan($detail_pemesanan_masakan_id) 
+    {
+        $pemesanan_masakan_id=$this->session->userdata('pemesanan_masakan_id');
+            $data = array(
+            'status' => 'dipesan',
+            );
+
+            $this->Detial_pemesanan_masakan_model->update($detail_pemesanan_masakan_id, $data);
+            $this->session->set_flashdata('message', 'Update Record Success');
+            redirect(site_url('detial_pemesanan_masakan/index/'.$pemesanan_masakan_id));
+        
+    }
+    public function status_pesanan_selesai($detail_pemesanan_masakan_id) 
+    {
+        $pemesanan_masakan_id=$this->session->userdata('pemesanan_masakan_id');
+            $data = array(
+            'status' => 'pesanan selesai',
+            );
+
+            $this->Detial_pemesanan_masakan_model->update($detail_pemesanan_masakan_id, $data);
+            $this->session->set_flashdata('message', 'Update Record Success');
+            redirect(site_url('detial_pemesanan_masakan/index/'.$pemesanan_masakan_id));
+        
     }
 
 }

@@ -14,7 +14,7 @@ class Detial_pemesanan_masakan_model extends CI_Model
     {
         parent::__construct();
     }
-
+ 
     // datatables
     function json($pemesanan_masakan_id) {
         $this->datatables->select('detail_pemesanan_masakan_id,pemesanan_masakan_id,menu_masakan_id,tanggal,harga,jumlah_pesan,subtotal,status');
@@ -24,7 +24,9 @@ class Detial_pemesanan_masakan_model extends CI_Model
         //$this->datatables->join('table2', 'detial_pemesanan_masakan.field = table2.field');
         $this->datatables->add_column('action', anchor(site_url('detial_pemesanan_masakan/read/$1'),'<i class="fa fa-eye" aria-hidden="true"></i>', array('class' => 'btn btn-danger btn-sm'))." 
             ".anchor(site_url('detial_pemesanan_masakan/update/$1'),'<i class="fa fa-pencil-square-o" aria-hidden="true"></i>', array('class' => 'btn btn-danger btn-sm'))." 
-                ".anchor(site_url('detial_pemesanan_masakan/delete/$1'),'<i class="fa fa-trash-o" aria-hidden="true"></i>','class="btn btn-danger btn-sm" onclick="javasciprt: return confirm(\'Are You Sure ?\')"'), 'detail_pemesanan_masakan_id');
+            ".anchor(site_url('detial_pemesanan_masakan/status_pesanan_selesai/$1'),'<i class="fa  fa-check" aria-hidden="true"></i>', array('class' => 'btn btn-warning btn-sm'))."  
+            ".anchor(site_url('detial_pemesanan_masakan/status_dipesan/$1'),'<i class="fa  fa-close" aria-hidden="true"></i>', array('class' => 'btn btn-warning btn-sm'))."  
+            ".anchor(site_url('detial_pemesanan_masakan/delete/$1'),'<i class="fa fa-trash-o" aria-hidden="true"></i>','class="btn btn-danger btn-sm" onclick="javasciprt: return confirm(\'Are You Sure ?\')"'), 'detail_pemesanan_masakan_id');
         return $this->datatables->generate();
     }
 

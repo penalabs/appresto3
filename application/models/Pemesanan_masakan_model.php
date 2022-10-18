@@ -17,7 +17,7 @@ class Pemesanan_masakan_model extends CI_Model
 
     // datatables
     function json() {
-        $this->datatables->select('pemesanan_maakan_id,no_antrian,nama_pembeli,total,full_name as nama_waiter');
+        $this->datatables->select('pemesanan_maakan_id,no_antrian,nama_pembeli,total,dibayar,status,full_name as nama_waiter');
         $this->datatables->from('pemesanan_masakan');
         
         //add this line for join
@@ -25,7 +25,8 @@ class Pemesanan_masakan_model extends CI_Model
         $this->datatables->join('tbl_user', 'tbl_user.id_users = pemesanan_masakan.id_users_waiter');
         $this->datatables->add_column('action', anchor(site_url('pemesanan_masakan/read/$1'),'<i class="fa fa-eye" aria-hidden="true"></i>', array('class' => 'btn btn-danger btn-sm'))." 
             ".anchor(site_url('pemesanan_masakan/update/$1'),'<i class="fa fa-pencil-square-o" aria-hidden="true"></i>', array('class' => 'btn btn-danger btn-sm'))."
-            ".anchor(site_url('detial_pemesanan_masakan/index/$1'),'<i class="fa fa-eye" aria-hidden="true"></i>', array('class' => 'btn btn-success btn-sm'))."  
+            ".anchor(site_url('detial_pemesanan_masakan/index/$1'),'<i class="fa fa-eye" aria-hidden="true"></i>', array('class' => 'btn btn-success btn-sm'))."
+            ".anchor(site_url('pembayaran_pemesanan/index/$1'),'<i class="fa  fa-money" aria-hidden="true"></i>', array('class' => 'btn btn-success btn-sm'))."    
                 ".anchor(site_url('pemesanan_masakan/delete/$1'),'<i class="fa fa-trash-o" aria-hidden="true"></i>','class="btn btn-danger btn-sm" onclick="javasciprt: return confirm(\'Are You Sure ?\')"'), 'pemesanan_maakan_id');
         return $this->datatables->generate();
     }
@@ -53,7 +54,7 @@ class Pemesanan_masakan_model extends CI_Model
 	$this->db->from($this->table);
         return $this->db->count_all_results();
     }
-
+ 
     // get data with limit and search
     function get_limit_data($limit, $start = 0, $q = NULL) {
         $this->db->order_by($this->id, $this->order);

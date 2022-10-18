@@ -5,24 +5,23 @@
                 <div class="box box-warning box-solid">
     
                     <div class="box-header">
-                        <h3 class="box-title">KELOLA DATA PEMESANAN_MASAKAN</h3>
+                        <h3 class="box-title">KELOLA DATA PEMBAYARAN_PEMESANAN</h3>
                     </div>
         
         <div class="box-body">
         <div style="padding-bottom: 10px;"'>
-        <?php echo anchor(site_url('pemesanan_masakan/create'), '<i class="fa fa-wpforms" aria-hidden="true"></i> Tambah Data', 'class="btn btn-danger btn-sm"'); ?>
-		<?php echo anchor(site_url('pemesanan_masakan/excel'), '<i class="fa fa-file-excel-o" aria-hidden="true"></i> Export Ms Excel', 'class="btn btn-success btn-sm"'); ?>
-		<?php echo anchor(site_url('pemesanan_masakan/word'), '<i class="fa fa-file-word-o" aria-hidden="true"></i> Export Ms Word', 'class="btn btn-primary btn-sm"'); ?></div>
+        <?php echo anchor(site_url('pemesanan_masakan'), '<i class="fa fa-wpforms" aria-hidden="true"></i> Kembali', 'class="btn btn-success btn-sm"'); ?>
+        <?php echo anchor(site_url('pembayaran_pemesanan/create'), '<i class="fa fa-wpforms" aria-hidden="true"></i> Tambah Data', 'class="btn btn-danger btn-sm"'); ?>
+		<?php echo anchor(site_url('pembayaran_pemesanan/excel'), '<i class="fa fa-file-excel-o" aria-hidden="true"></i> Export Ms Excel', 'class="btn btn-success btn-sm"'); ?>
+		<?php echo anchor(site_url('pembayaran_pemesanan/word'), '<i class="fa fa-file-word-o" aria-hidden="true"></i> Export Ms Word', 'class="btn btn-primary btn-sm"'); ?></div>
         <table class="table table-bordered table-striped" id="mytable">
             <thead>
                 <tr>
                     <th width="30px">No</th>
-		    <th>No Antrian</th>
-		    <th>Nama Pembeli</th>
-            <th>Total</th>
-            <th>Dibayar</th>
-            <th>Status</th>
-		    <th>Id Users Waiter</th>
+		    <th>Tanggal</th>
+		    <th>Nominal</th>
+		    <th>Pemesanan Masakan Id</th>
+		    <th>Id Users Kasir</th>
 		    <th width="200px">Action</th>
                 </tr>
             </thead>
@@ -68,12 +67,16 @@
                     },
                     processing: true,
                     serverSide: true,
-                    ajax: {"url": "pemesanan_masakan/json", "type": "POST"},
+                    ajax: {"url": "<?php echo base_url();?>index.php/pembayaran_pemesanan/json", "type": "POST",
+                        'data': {
+                            pemesanan_masakan_id: '<?php echo $this->session->userdata('pemesanan_masakan_id');?>',
+                        },
+                    },
                     columns: [
                         {
-                            "data": "pemesanan_maakan_id",
+                            "data": "pembayaran_pemesanan_id",
                             "orderable": false
-                        },{"data": "no_antrian"},{"data": "nama_pembeli"},{"data": "total"},{"data": "dibayar"},{"data": "status"},{"data": "nama_waiter"},
+                        },{"data": "tanggal"},{"data": "nominal"},{"data": "pemesanan_masakan_id"},{"data": "id_users_kasir"},
                         {
                             "data" : "action",
                             "orderable": false,
