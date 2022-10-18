@@ -105,14 +105,16 @@ CREATE TABLE `detial_pemesanan_masakan` (
   `harga` varchar(500) DEFAULT NULL,
   `jumlah_pesan` int(11) DEFAULT NULL,
   `subtotal` int(11) DEFAULT NULL,
-  `status` enum('dipesan','pemesanan selesai') DEFAULT NULL,
+  `status` enum('dipesan','diproduksi','pesanan selesai') DEFAULT NULL,
   PRIMARY KEY (`detail_pemesanan_masakan_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `detial_pemesanan_masakan` */
 
 insert  into `detial_pemesanan_masakan`(`detail_pemesanan_masakan_id`,`pemesanan_masakan_id`,`menu_masakan_id`,`tanggal`,`harga`,`jumlah_pesan`,`subtotal`,`status`) values 
-(4,'1',1,'0000-00-00 00:00:00','11',1,11,'dipesan');
+(11,'1',11,'2022-10-18 12:00:00','5000',1,5000,'dipesan'),
+(12,'1',11,'2022-10-18 12:00:00','5000',5,25000,'dipesan'),
+(13,'1',11,'2022-10-18 12:00:00','5000',1,5000,'pesanan selesai');
 
 /*Table structure for table `gaji` */
 
@@ -209,7 +211,7 @@ CREATE TABLE `kas` (
 /*Data for the table `kas` */
 
 insert  into `kas`(`kas_id`,`nama_kas`,`saldo`) values 
-(2,'Kas Kecil',0),
+(2,'Kas Kecil',-50),
 (4,'Kas Investor',5000000),
 (5,'Kas Bendahara',0),
 (6,'KAS CABANG',2000000);
@@ -231,10 +233,30 @@ CREATE TABLE `menu_masakan` (
 /*Data for the table `menu_masakan` */
 
 insert  into `menu_masakan`(`menu_masakan_id`,`nama_masakan`,`stok`,`gambar`,`harga`,`id_users`) values 
-(10,'1',1,'cctv.png',NULL,1),
-(11,'1',1,'banner3.jpeg',NULL,1),
+(10,'1',1,'cctv.png','5000',1),
+(11,'1',1,'banner3.jpeg','5000',1),
 (12,'1',1,'cctv1.png','5000',12),
-(15,'1',1,'covidtracker.png','1',16);
+(15,'1',1,'covidtracker.png','5000',16);
+
+/*Table structure for table `pembayaran_pemesanan` */
+
+DROP TABLE IF EXISTS `pembayaran_pemesanan`;
+
+CREATE TABLE `pembayaran_pemesanan` (
+  `pembayaran_pemesanan_id` int(11) NOT NULL AUTO_INCREMENT,
+  `tanggal` datetime DEFAULT NULL,
+  `nominal` varchar(500) DEFAULT NULL,
+  `pemesanan_masakan_id` int(11) DEFAULT NULL,
+  `id_users_kasir` int(11) DEFAULT NULL,
+  PRIMARY KEY (`pembayaran_pemesanan_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4;
+
+/*Data for the table `pembayaran_pemesanan` */
+
+insert  into `pembayaran_pemesanan`(`pembayaran_pemesanan_id`,`tanggal`,`nominal`,`pemesanan_masakan_id`,`id_users_kasir`) values 
+(7,'2022-10-18 12:00:00','15000',1,9),
+(9,'2022-10-18 12:00:00','10000',1,9),
+(10,'2022-10-18 12:00:00','15000',1,9);
 
 /*Table structure for table `pemesanan_masakan` */
 
@@ -245,13 +267,16 @@ CREATE TABLE `pemesanan_masakan` (
   `no_antrian` varchar(500) DEFAULT NULL,
   `nama_pembeli` varchar(500) DEFAULT NULL,
   `id_users_waiter` int(11) DEFAULT NULL,
+  `total` int(11) DEFAULT NULL,
+  `dibayar` varchar(500) DEFAULT NULL,
+  `status` enum('belum dibayar','kredit','lunas') DEFAULT NULL,
   PRIMARY KEY (`pemesanan_maakan_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `pemesanan_masakan` */
 
-insert  into `pemesanan_masakan`(`pemesanan_maakan_id`,`no_antrian`,`nama_pembeli`,`id_users_waiter`) values 
-(1,'1','abid',16);
+insert  into `pemesanan_masakan`(`pemesanan_maakan_id`,`no_antrian`,`nama_pembeli`,`id_users_waiter`,`total`,`dibayar`,`status`) values 
+(1,'1','abid',16,35000,'40000','lunas');
 
 /*Table structure for table `pengadaan_bahan_mentah` */
 
@@ -677,11 +702,11 @@ DELIMITER ;
 
 DELIMITER $$
 
-/*!50003 DROP TRIGGER*//*!50032 IF EXISTS */ /*!50003 `update_penambahan_saldo_oleh_gaji` */$$
+/*!50003 DROP TRIGGER*//*!50032 IF EXISTS */ /*!50003 `update_pengurangan_saldo_oleh_gaji` */$$
 
-/*!50003 CREATE */ /*!50017 DEFINER = 'root'@'localhost' */ /*!50003 TRIGGER `update_penambahan_saldo_oleh_gaji` AFTER UPDATE ON `gaji` FOR EACH ROW BEGIN
-   IF OLD.nominal < NEW.nominal THEN
-	UPDATE kas SET saldo=saldo-OLD.nominal-NEW.nominal
+/*!50003 CREATE */ /*!50017 DEFINER = 'root'@'localhost' */ /*!50003 TRIGGER `update_pengurangan_saldo_oleh_gaji` AFTER UPDATE ON `gaji` FOR EACH ROW BEGIN
+   IF OLD.nominal <= NEW.nominal THEN
+	UPDATE kas SET saldo=saldo+(NEW.nominal-OLD.nominal)
     WHERE kas_id=OLD.kas_id;
     END IF;
 END */$$
@@ -693,11 +718,11 @@ DELIMITER ;
 
 DELIMITER $$
 
-/*!50003 DROP TRIGGER*//*!50032 IF EXISTS */ /*!50003 `update_pengurangan_saldo_oleh_gaji` */$$
+/*!50003 DROP TRIGGER*//*!50032 IF EXISTS */ /*!50003 `update_penambahan_saldo_oleh_gaji` */$$
 
-/*!50003 CREATE */ /*!50017 DEFINER = 'root'@'localhost' */ /*!50003 TRIGGER `update_pengurangan_saldo_oleh_gaji` AFTER UPDATE ON `gaji` FOR EACH ROW BEGIN
-   IF OLD.nominal < NEW.nominal THEN
-	UPDATE kas SET saldo=saldo-OLD.nominal-NEW.nominal
+/*!50003 CREATE */ /*!50017 DEFINER = 'root'@'localhost' */ /*!50003 TRIGGER `update_penambahan_saldo_oleh_gaji` AFTER UPDATE ON `gaji` FOR EACH ROW BEGIN
+   IF OLD.nominal >= NEW.nominal THEN
+	UPDATE kas SET saldo=saldo-(NEW.nominal-OLD.nominal)
     WHERE kas_id=OLD.kas_id;
     END IF;
 END */$$
@@ -737,9 +762,9 @@ DELIMITER ;
 
 DELIMITER $$
 
-/*!50003 DROP TRIGGER*//*!50032 IF EXISTS */ /*!50003 `update_penambahan_saldo_oleh_investasi` */$$
+/*!50003 DROP TRIGGER*//*!50032 IF EXISTS */ /*!50003 `update_pengurangan_saldo_oleh_investasi` */$$
 
-/*!50003 CREATE */ /*!50017 DEFINER = 'root'@'localhost' */ /*!50003 TRIGGER `update_penambahan_saldo_oleh_investasi` AFTER UPDATE ON `investasi` FOR EACH ROW BEGIN
+/*!50003 CREATE */ /*!50017 DEFINER = 'root'@'localhost' */ /*!50003 TRIGGER `update_pengurangan_saldo_oleh_investasi` AFTER UPDATE ON `investasi` FOR EACH ROW BEGIN
    IF OLD.nominal < NEW.nominal THEN
 	UPDATE kas SET saldo=saldo-OLD.nominal-NEW.nominal
     WHERE kas_id=OLD.kas_id;
@@ -753,11 +778,11 @@ DELIMITER ;
 
 DELIMITER $$
 
-/*!50003 DROP TRIGGER*//*!50032 IF EXISTS */ /*!50003 `update_pengurangan_saldo_oleh_investasi` */$$
+/*!50003 DROP TRIGGER*//*!50032 IF EXISTS */ /*!50003 `update_penambahan_saldo_oleh_investasi` */$$
 
-/*!50003 CREATE */ /*!50017 DEFINER = 'root'@'localhost' */ /*!50003 TRIGGER `update_pengurangan_saldo_oleh_investasi` AFTER UPDATE ON `investasi` FOR EACH ROW BEGIN
-   IF OLD.nominal < NEW.nominal THEN
-	UPDATE kas SET saldo=saldo-OLD.nominal-NEW.nominal
+/*!50003 CREATE */ /*!50017 DEFINER = 'root'@'localhost' */ /*!50003 TRIGGER `update_penambahan_saldo_oleh_investasi` AFTER UPDATE ON `investasi` FOR EACH ROW BEGIN
+   IF OLD.nominal >= NEW.nominal THEN
+	UPDATE kas SET saldo=saldo-(NEW.nominal-OLD.nominal)
     WHERE kas_id=OLD.kas_id;
     END IF;
 END */$$
@@ -816,8 +841,8 @@ DELIMITER $$
 /*!50003 DROP TRIGGER*//*!50032 IF EXISTS */ /*!50003 `update_penambahan_saldo_oleh_investor` */$$
 
 /*!50003 CREATE */ /*!50017 DEFINER = 'root'@'localhost' */ /*!50003 TRIGGER `update_penambahan_saldo_oleh_investor` AFTER UPDATE ON `transaksi_kas_investor` FOR EACH ROW BEGIN
-   IF OLD.nominal < NEW.nominal THEN
-	UPDATE kas SET saldo=saldo-OLD.nominal-NEW.nominal
+   IF OLD.nominal >= NEW.nominal THEN
+	UPDATE kas SET saldo=saldo-(NEW.nominal-OLD.nominal)
     WHERE kas_id=OLD.kas_id;
     END IF;
 END */$$
