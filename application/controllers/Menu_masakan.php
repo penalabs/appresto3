@@ -95,7 +95,7 @@ class Menu_masakan extends CI_Controller
             $this->Menu_masakan_model->insert($data);
             $this->session->set_flashdata('message', 'Create Record Success 2');
             redirect(site_url('menu_masakan'));
-        }
+        
     }
     
     public function update($id) 
