@@ -3,32 +3,62 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
-class Detial_pemesanan_masakan extends CI_Controller
+class Kasir_detial_pemesanan_masakan extends CI_Controller
 {
     function __construct()
     {
         parent::__construct();
         
-        $this->load->model('Detial_pemesanan_masakan_model');
+        $this->load->model('Kasir_detial_pemesanan_masakan_model');
+        $this->load->model('Pembayaran_pemesanan_model');
         $this->load->model('Pemesanan_masakan_model');
+        
         $this->load->library('form_validation');        
 	$this->load->library('datatables');
     }
 
-    public function index($pemesanan_masakan_id)
+    public function index()
     {
+        $this->template->load('template','kasir_detial_pemesanan_masakan/detial_pemesanan_masakan_list');
+    } 
+
+    public function filter()
+    {
+
+        $no_antrian="";
+        if($no_antrian==""){
+            $no_antrian=$this->input->get('no_antrian',TRUE);
+            $no_antrian;
+        }else{
+            $no_antrian=$this->session->userdata('no_antrian');
+            $no_antrian;
+        }
+       
+        $sql="Select pemesanan_masakan.*,tbl_user.full_name as nama_waiter  from pemesanan_masakan join tbl_user on tbl_user.id_users=pemesanan_masakan.id_users_waiter where no_antrian='$no_antrian'";    
+        $row = $this->db->query($sql)->row();
+        if ($row) {
+            $data = array(
+        'pemesanan_masakan_id' => $row->pemesanan_maakan_id,
+		'no_antrian' => $row->no_antrian,
+		'nama_pembeli' => $row->nama_pembeli,
+        'nama_waiter' => $row->nama_waiter,
+		'id_users_waiter' => $row->id_users_waiter,
+		'total' => $row->total,
+		'dibayar' => $row->dibayar,
+		'status' => $row->status,
+	    );
+
         $session_data = array(
-            'pemesanan_masakan_id'  => $pemesanan_masakan_id,
+            'pemesanan_masakan_id'  => $row->pemesanan_maakan_id,
+            'no_antrian' =>  $row->no_antrian
         );
         $this->session->set_userdata($session_data);
-        $this->template->load('template','detial_pemesanan_masakan/detial_pemesanan_masakan_list');
+
+        $no_antrian;
+
+        $this->template->load('template','kasir_detial_pemesanan_masakan/detial_pemesanan_masakan_list_filter',$data);
+        }
     } 
-    
-    public function json() {
-        header('Content-Type: application/json');
-        $pemesanan_masakan_id=$this->input->post('pemesanan_masakan_id',TRUE);
-        echo $this->Detial_pemesanan_masakan_model->json($pemesanan_masakan_id);
-    }
 
     public function get_harga(){
         $menu_masakan_id=$this->input->post('menu_masakan_id',TRUE);
@@ -40,9 +70,43 @@ class Detial_pemesanan_masakan extends CI_Controller
        
     }
 
+    public function get_harga2(){
+        $no_antrian=$this->input->post('no_antrian',TRUE);
+        $sql="Select * from pemesanan_masakan where pemesanan_maakan_id='$no_antrian'";    
+        $query = $this->db->query($sql);
+        $hasil=$query->row_array();
+        echo json_encode($hasil);
+
+       
+    }
+
+    public function bayar(){
+        $data = array(
+            'pemesanan_masakan_id' => $this->input->post('pemesanan_masakan_id',TRUE),
+            'tanggal' => $this->input->post('tanggal',TRUE),
+            'nominal' => $this->input->post('nominal',TRUE),
+            'id_users_kasir' => $this->input->post('id_users_kasir',TRUE),
+            );
+
+         $this->Pembayaran_pemesanan_model->insert($data);
+
+         $hasil = array(
+            'pesan' => "sukses",
+        );
+        echo json_encode($hasil);
+
+       
+    }
+    
+    public function json() {
+        $pemesanan_masakan_id=$this->input->post('pemesanan_masakan_id',TRUE);
+        header('Content-Type: application/json');
+        echo $this->Kasir_detial_pemesanan_masakan_model->json($pemesanan_masakan_id);
+    }
+
     public function read($id) 
     {
-        $row = $this->Detial_pemesanan_masakan_model->get_by_id($id);
+        $row = $this->Kasir_detial_pemesanan_masakan_model->get_by_id($id);
         if ($row) {
             $data = array(
 		'detail_pemesanan_masakan_id' => $row->detail_pemesanan_masakan_id,
@@ -54,10 +118,10 @@ class Detial_pemesanan_masakan extends CI_Controller
 		'subtotal' => $row->subtotal,
 		'status' => $row->status,
 	    );
-            $this->template->load('template','detial_pemesanan_masakan/detial_pemesanan_masakan_read', $data);
+            $this->template->load('template','kasir_detial_pemesanan_masakan/detial_pemesanan_masakan_read', $data);
         } else {
             $this->session->set_flashdata('message', 'Record Not Found');
-            redirect(site_url('detial_pemesanan_masakan'));
+            redirect(site_url('kasir_detial_pemesanan_masakan'));
         }
     }
 
@@ -65,7 +129,7 @@ class Detial_pemesanan_masakan extends CI_Controller
     {
         $data = array(
             'button' => 'Create',
-            'action' => site_url('detial_pemesanan_masakan/create_action'),
+            'action' => site_url('kasir_detial_pemesanan_masakan/create_action'),
 	    'detail_pemesanan_masakan_id' => set_value('detail_pemesanan_masakan_id'),
 	    'pemesanan_masakan_id' => set_value('pemesanan_masakan_id'),
 	    'menu_masakan_id' => set_value('menu_masakan_id'),
@@ -75,12 +139,7 @@ class Detial_pemesanan_masakan extends CI_Controller
 	    'subtotal' => set_value('subtotal'),
 	    'status' => set_value('status'),
 	);
-
-
-
-        
-
-        $this->template->load('template','detial_pemesanan_masakan/detial_pemesanan_masakan_form', $data);
+        $this->template->load('template','kasir_detial_pemesanan_masakan/detial_pemesanan_masakan_form', $data);
     }
     
     public function create_action() 
@@ -103,37 +162,36 @@ class Detial_pemesanan_masakan extends CI_Controller
         
 
 
-
-            $this->Detial_pemesanan_masakan_model->insert($data);
+            $this->Kasir_detial_pemesanan_masakan_model->insert($data);
             $this->session->set_flashdata('message', 'Create Record Success 2');
-
-            $menu_masakan_id=$this->input->post('menu_masakan_id',TRUE);
-            $sql="Select SUM(subtotal) as subtotal from detial_pemesanan_masakan where menu_masakan_id='$menu_masakan_id'";    
-            $query = $this->db->query($sql);
-            $hasil=$query->row();
-
-            $data2 = array(
-                'total' => $hasil->subtotal,
-            );
+            $no_antrian=$this->session->userdata('no_antrian');
 
 
-            $this->Pemesanan_masakan_model->update($this->input->post('pemesanan_masakan_id', TRUE), $data2);
-            $this->session->set_flashdata('message', 'Update Record Success');
-        
 
-            $pemesanan_masakan_id=$this->session->userdata('pemesanan_masakan_id');
-            redirect(site_url('detial_pemesanan_masakan/index/'.$pemesanan_masakan_id));
+        $pemesanan_masakan_id=$this->input->post('pemesanan_masakan_id',TRUE);
+        $sql="Select SUM(subtotal) as subtotal from detial_pemesanan_masakan where pemesanan_masakan_id='$pemesanan_masakan_id'";    
+        $query = $this->db->query($sql);
+        $hasil=$query->row();
+
+        $data2 = array(
+            'total' => $hasil->subtotal,
+        );
+
+
+        $this->Pemesanan_masakan_model->update($this->input->post('pemesanan_masakan_id', TRUE), $data2);
+        $this->session->set_flashdata('message', 'Update Record Success');
+            redirect(site_url('kasir_detial_pemesanan_masakan/filter?no_antrian='.$no_antrian));
         }
     }
     
     public function update($id) 
     {
-        $row = $this->Detial_pemesanan_masakan_model->get_by_id($id);
+        $row = $this->Kasir_detial_pemesanan_masakan_model->get_by_id($id);
 
         if ($row) {
             $data = array(
                 'button' => 'Update',
-                'action' => site_url('detial_pemesanan_masakan/update_action'),
+                'action' => site_url('kasir_detial_pemesanan_masakan/update_action'),
 		'detail_pemesanan_masakan_id' => set_value('detail_pemesanan_masakan_id', $row->detail_pemesanan_masakan_id),
 		'pemesanan_masakan_id' => set_value('pemesanan_masakan_id', $row->pemesanan_masakan_id),
 		'menu_masakan_id' => set_value('menu_masakan_id', $row->menu_masakan_id),
@@ -143,11 +201,10 @@ class Detial_pemesanan_masakan extends CI_Controller
 		'subtotal' => set_value('subtotal', $row->subtotal),
 		'status' => set_value('status', $row->status),
 	    );
-            $this->template->load('template','detial_pemesanan_masakan/detial_pemesanan_masakan_form', $data);
+            $this->template->load('template','kasir_detial_pemesanan_masakan/detial_pemesanan_masakan_form', $data);
         } else {
             $this->session->set_flashdata('message', 'Record Not Found');
-            $pemesanan_masakan_id=$this->session->userdata('pemesanan_masakan_id');
-            redirect(site_url('detial_pemesanan_masakan/index/'.$pemesanan_masakan_id));
+            redirect(site_url('kasir_detial_pemesanan_masakan'));
         }
     }
     
@@ -168,45 +225,58 @@ class Detial_pemesanan_masakan extends CI_Controller
 		'status' => $this->input->post('status',TRUE),
 	    );
 
-            $this->Detial_pemesanan_masakan_model->update($this->input->post('detail_pemesanan_masakan_id', TRUE), $data);
+            $this->Kasir_detial_pemesanan_masakan_model->update($this->input->post('detail_pemesanan_masakan_id', TRUE), $data);
             $this->session->set_flashdata('message', 'Update Record Success');
-            
-
-            $menu_masakan_id=$this->input->post('menu_masakan_id',TRUE);
-            $sql="Select SUM(subtotal) as subtotal from detial_pemesanan_masakan where menu_masakan_id='$menu_masakan_id'";    
-            $query = $this->db->query($sql);
-            $hasil=$query->row();
-
-            $data2 = array(
-                'total' => $hasil->subtotal,
-            );
-
-
-            $this->Pemesanan_masakan_model->update($this->input->post('pemesanan_maakan_id', TRUE), $data2);
-            $this->session->set_flashdata('message', 'Update Record Success');
-
-            $pemesanan_masakan_id=$this->session->userdata('pemesanan_masakan_id');
-            redirect(site_url('detial_pemesanan_masakan/index/'.$pemesanan_masakan_id));
+            redirect(site_url('kasir_detial_pemesanan_masakan'));
         }
     }
     
     public function delete($id) 
     {
-       
 
 
-        $row = $this->Detial_pemesanan_masakan_model->get_by_id($id);
-        $pemesanan_masakan_id=$this->session->userdata('pemesanan_masakan_id');
+        
+
+         $no_antrian=$this->session->userdata('no_antrian');
+
+        $row = $this->Kasir_detial_pemesanan_masakan_model->get_by_id($id);
+
+
+        $sql="Select pemesanan_masakan_id  from detial_pemesanan_masakan where detail_pemesanan_masakan_id='$id'";
+            $query = $this->db->query($sql);
+             $hasil=$query->row();
+            $pemesana_masakan_id=$hasil->pemesanan_masakan_id;
+            echo json_encode($hasil);
+
+
         if ($row) {
-            $this->Detial_pemesanan_masakan_model->delete($id);
+            $this->Kasir_detial_pemesanan_masakan_model->delete($id);
             $this->session->set_flashdata('message', 'Delete Record Success');
 
 
+            
 
-            redirect(site_url('detial_pemesanan_masakan/index/'.$pemesanan_masakan_id));
+
+
+            $sql="Select SUM(subtotal) as subtotal from detial_pemesanan_masakan where pemesanan_masakan_id='$pemesana_masakan_id'";    
+            $query = $this->db->query($sql);
+            $hasil=$query->row();
+    
+            $data2 = array(
+                'total' => $hasil->subtotal,
+            );
+    
+    
+            $this->Pemesanan_masakan_model->update($pemesana_masakan_id, $data2);
+
+            echo $hasil->subtotal;
+
+            $no_antrian=$this->session->userdata('no_antrian');
+            redirect(site_url('kasir_detial_pemesanan_masakan/filter?no_antrian='.$no_antrian));
         } else {
             $this->session->set_flashdata('message', 'Record Not Found');
-            redirect(site_url('detial_pemesanan_masakan/index/'.$pemesanan_masakan_id));
+            $no_antrian=$this->session->userdata('no_antrian');
+            redirect(site_url('kasir_detial_pemesanan_masakan/filter?no_antrian='.$no_antrian));
         }
     }
 
@@ -254,7 +324,7 @@ class Detial_pemesanan_masakan extends CI_Controller
 	xlsWriteLabel($tablehead, $kolomhead++, "Subtotal");
 	xlsWriteLabel($tablehead, $kolomhead++, "Status");
 
-	foreach ($this->Detial_pemesanan_masakan_model->get_all() as $data) {
+	foreach ($this->Kasir_detial_pemesanan_masakan_model->get_all() as $data) {
             $kolombody = 0;
 
             //ubah xlsWriteLabel menjadi xlsWriteNumber untuk kolom numeric
@@ -281,42 +351,17 @@ class Detial_pemesanan_masakan extends CI_Controller
         header("Content-Disposition: attachment;Filename=detial_pemesanan_masakan.doc");
 
         $data = array(
-            'detial_pemesanan_masakan_data' => $this->Detial_pemesanan_masakan_model->get_all(),
+            'detial_pemesanan_masakan_data' => $this->Kasir_detial_pemesanan_masakan_model->get_all(),
             'start' => 0
         );
         
-        $this->load->view('detial_pemesanan_masakan/detial_pemesanan_masakan_doc',$data);
-    }
-
-    public function status_dipesan($detail_pemesanan_masakan_id) 
-    {
-        $pemesanan_masakan_id=$this->session->userdata('pemesanan_masakan_id');
-            $data = array(
-            'status' => 'dipesan',
-            );
-
-            $this->Detial_pemesanan_masakan_model->update($detail_pemesanan_masakan_id, $data);
-            $this->session->set_flashdata('message', 'Update Record Success');
-            redirect(site_url('detial_pemesanan_masakan/index/'.$pemesanan_masakan_id));
-        
-    }
-    public function status_pesanan_selesai($detail_pemesanan_masakan_id) 
-    {
-        $pemesanan_masakan_id=$this->session->userdata('pemesanan_masakan_id');
-            $data = array(
-            'status' => 'pesanan selesai',
-            );
-
-            $this->Detial_pemesanan_masakan_model->update($detail_pemesanan_masakan_id, $data);
-            $this->session->set_flashdata('message', 'Update Record Success');
-            redirect(site_url('detial_pemesanan_masakan/index/'.$pemesanan_masakan_id));
-        
+        $this->load->view('kasir_detial_pemesanan_masakan/detial_pemesanan_masakan_doc',$data);
     }
 
 }
 
-/* End of file Detial_pemesanan_masakan.php */
-/* Location: ./application/controllers/Detial_pemesanan_masakan.php */
+/* End of file Kasir_detial_pemesanan_masakan.php */
+/* Location: ./application/controllers/Kasir_detial_pemesanan_masakan.php */
 /* Please DO NOT modify this information : */
-/* Generated by Harviacode Codeigniter CRUD Generator 2022-10-17 06:20:32 */
+/* Generated by Harviacode Codeigniter CRUD Generator 2022-10-19 13:52:00 */
 /* http://harviacode.com */

@@ -120,6 +120,18 @@ Class Auth extends CI_Controller{
                     $this->session->set_userdata($session_data);
                     redirect('waiter');
                     echo $this->session->userdata('email');
+                 }else if($user['nama_level']=='kasir'){ //akses admin
+                    $session_data = array(
+                        'nama_level'  => $user['nama_level'],
+                        'id_users' => $user['id_users'],
+                        'email' => $user['email'],
+                        'images' => $user['images'],
+                        'id_user_level' => $user['id_user_level'],
+                        'is_aktif' => $user['is_aktif']
+                    );
+                    $this->session->set_userdata($session_data);
+                    redirect('kasir');
+                    echo $this->session->userdata('email');
                  }
                  echo 1;
         }else{
