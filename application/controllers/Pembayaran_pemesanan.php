@@ -10,25 +10,28 @@ class Pembayaran_pemesanan extends CI_Controller
         parent::__construct();
         
         $this->load->model('Pembayaran_pemesanan_model');
-        $this->load->model('Pemesanan_masakan_model');
-        
         $this->load->library('form_validation');        
 	$this->load->library('datatables');
     }
 
-    public function index($pemesanan_masakan_id)
+    public function index()
     {
-        $session_data = array(
-            'pemesanan_masakan_id'  => $pemesanan_masakan_id,
-        );
-        $this->session->set_userdata($session_data);
         $this->template->load('template','pembayaran_pemesanan/pembayaran_pemesanan_list');
     } 
     
     public function json() {
         header('Content-Type: application/json');
-        $pemesanan_masakan_id=$this->input->post('pemesanan_masakan_id',TRUE);
-        echo $this->Pembayaran_pemesanan_model->json($pemesanan_masakan_id);
+        echo $this->Pembayaran_pemesanan_model->json();
+    }
+
+    public function get_data_pemesanan(){
+        $no_antrian=$this->input->post('no_antrian',TRUE);
+        $sql="Select * from pemesanan_masakan where no_antrian='$no_antrian' AND status='belum dibayar'";    
+        $query = $this->db->query($sql);
+        $hasil=$query->row_array();
+        echo json_encode($hasil);
+
+       
     }
 
     public function read($id) 
@@ -66,7 +69,7 @@ class Pembayaran_pemesanan extends CI_Controller
     public function create_action() 
     {
         $this->_rules();
-        $pemesanan_masakan_id=$this->session->userdata('pemesanan_masakan_id');
+
         if ($this->form_validation->run() == FALSE) {
             $this->create();
         } else {
@@ -79,36 +82,7 @@ class Pembayaran_pemesanan extends CI_Controller
 
             $this->Pembayaran_pemesanan_model->insert($data);
             $this->session->set_flashdata('message', 'Create Record Success 2');
-
-
-            
-            $sql="Select SUM(nominal) as pembayaran from pembayaran_pemesanan where pemesanan_masakan_id='$pemesanan_masakan_id'";    
-            $query = $this->db->query($sql);
-            $hasil=$query->row();
-            $pembayaran=$hasil->pembayaran;
-
-            $sql="Select total from pemesanan_masakan where pemesanan_maakan_id='$pemesanan_masakan_id'";    
-            $query = $this->db->query($sql);
-            $hasil=$query->row();
-            $total=$hasil->total;
-
-            $status="";
-            if($pembayaran>=$total){
-                $status="lunas";
-            }else{
-                $status="kredit";
-            }
-
-            $data = array(
-                'status' => $status,
-                'dibayar' => $pembayaran,
-                );
-        
-            $this->Pemesanan_masakan_model->update($pemesanan_masakan_id, $data);
-            
-
-
-            redirect(site_url('pembayaran_pemesanan/index/'.$pemesanan_masakan_id));
+            redirect(site_url('pembayaran_pemesanan'));
         }
     }
     
@@ -136,7 +110,7 @@ class Pembayaran_pemesanan extends CI_Controller
     public function update_action() 
     {
         $this->_rules();
-        $pemesanan_masakan_id=$this->session->userdata('pemesanan_masakan_id');
+
         if ($this->form_validation->run() == FALSE) {
             $this->update($this->input->post('pembayaran_pemesanan_id', TRUE));
         } else {
@@ -149,51 +123,21 @@ class Pembayaran_pemesanan extends CI_Controller
 
             $this->Pembayaran_pemesanan_model->update($this->input->post('pembayaran_pemesanan_id', TRUE), $data);
             $this->session->set_flashdata('message', 'Update Record Success');
-
-
-
-            $sql="Select SUM(nominal) as pembayaran from pembayaran_pemesanan where pemesanan_masakan_id='$pemesanan_masakan_id'";    
-            $query = $this->db->query($sql);
-            $hasil=$query->row();
-            $pembayaran=$hasil->pembayaran;
-
-            $sql="Select total from pemesanan_masakan where pemesanan_maakan_id='$pemesanan_masakan_id'";    
-            $query = $this->db->query($sql);
-            $hasil=$query->row();
-            $total=$hasil->total;
-
-            $status="";
-            if($pembayaran>=$total){
-                $status="lunas";
-            }else{
-                $status="kredit";
-            }
-
-            $data = array(
-                'status' => $status,
-                'dibayar' => $pembayaran,
-                );
-
-            $this->Pemesanan_masakan_model->update($pemesanan_masakan_id, $data);
-
-
-
-            $pemesanan_masakan_id=$this->session->userdata('pemesanan_masakan_id');
-            redirect(site_url('pembayaran_pemesanan/index/'.$pemesanan_masakan_id));
+            redirect(site_url('pembayaran_pemesanan'));
         }
     }
     
     public function delete($id) 
     {
         $row = $this->Pembayaran_pemesanan_model->get_by_id($id);
-        echo $pemesanan_masakan_id=$this->session->userdata('pemesanan_masakan_id');
+
         if ($row) {
             $this->Pembayaran_pemesanan_model->delete($id);
             $this->session->set_flashdata('message', 'Delete Record Success');
-            redirect(site_url('pembayaran_pemesanan/index/'.$pemesanan_masakan_id));
+            redirect(site_url('pembayaran_pemesanan'));
         } else {
             $this->session->set_flashdata('message', 'Record Not Found');
-            redirect(site_url('pembayaran_pemesanan/index/'.$pemesanan_masakan_id));
+            redirect(site_url('pembayaran_pemesanan'));
         }
     }
 
@@ -271,5 +215,5 @@ class Pembayaran_pemesanan extends CI_Controller
 /* End of file Pembayaran_pemesanan.php */
 /* Location: ./application/controllers/Pembayaran_pemesanan.php */
 /* Please DO NOT modify this information : */
-/* Generated by Harviacode Codeigniter CRUD Generator 2022-10-18 17:37:42 */
+/* Generated by Harviacode Codeigniter CRUD Generator 2022-10-21 17:29:04 */
 /* http://harviacode.com */

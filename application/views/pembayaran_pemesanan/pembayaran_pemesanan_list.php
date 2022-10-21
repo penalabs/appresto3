@@ -10,7 +10,6 @@
         
         <div class="box-body">
         <div style="padding-bottom: 10px;"'>
-        <?php echo anchor(site_url('pemesanan_masakan'), '<i class="fa fa-wpforms" aria-hidden="true"></i> Kembali', 'class="btn btn-success btn-sm"'); ?>
         <?php echo anchor(site_url('pembayaran_pemesanan/create'), '<i class="fa fa-wpforms" aria-hidden="true"></i> Tambah Data', 'class="btn btn-danger btn-sm"'); ?>
 		<?php echo anchor(site_url('pembayaran_pemesanan/excel'), '<i class="fa fa-file-excel-o" aria-hidden="true"></i> Export Ms Excel', 'class="btn btn-success btn-sm"'); ?>
 		<?php echo anchor(site_url('pembayaran_pemesanan/word'), '<i class="fa fa-file-word-o" aria-hidden="true"></i> Export Ms Word', 'class="btn btn-primary btn-sm"'); ?></div>
@@ -21,6 +20,7 @@
 		    <th>Tanggal</th>
 		    <th>Nominal</th>
 		    <th>Pemesanan Masakan Id</th>
+            <th>Nama pembeli</th>
 		    <th>Id Users Kasir</th>
 		    <th width="200px">Action</th>
                 </tr>
@@ -67,16 +67,12 @@
                     },
                     processing: true,
                     serverSide: true,
-                    ajax: {"url": "<?php echo base_url();?>index.php/pembayaran_pemesanan/json", "type": "POST",
-                        'data': {
-                            pemesanan_masakan_id: '<?php echo $this->session->userdata('pemesanan_masakan_id');?>',
-                        },
-                    },
+                    ajax: {"url": "pembayaran_pemesanan/json", "type": "POST"},
                     columns: [
                         {
                             "data": "pembayaran_pemesanan_id",
                             "orderable": false
-                        },{"data": "tanggal"},{"data": "nominal"},{"data": "pemesanan_masakan_id"},{"data": "id_users_kasir"},
+                        },{"data": "tanggal"},{"data": "nominal"},{"data": "pemesanan_masakan_id"},{"data": "nama_pembeli"},{"data": "nama_kasir"},
                         {
                             "data" : "action",
                             "orderable": false,

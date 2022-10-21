@@ -7,6 +7,10 @@
 			<form action="<?php echo $action; ?>" method="post">
 			
 				<table class='table table-bordered'>
+
+					<tr>
+						<td width='200'>No Antrian </td><td><input type="text" class="form-control" name="no_antrian" id="no_antrian" placeholder="No Antrian" value="0" /></td>
+					</tr>
 	
 					<tr>
 						<td width='200'>Tanggal <?php echo form_error('tanggal') ?></td><td><input type="text" class="form-control" name="tanggal" id="tanggal" placeholder="Tanggal" value="<?php echo $tanggal; ?>" /></td>
@@ -17,15 +21,11 @@
 					</tr>
 	
 					<tr>
-						<td><input type="hidden" class="form-control" name="pemesanan_masakan_id" id="pemesanan_masakan_id" placeholder="Pemesanan Masakan Id" value="<?php echo $this->session->userdata('pemesanan_masakan_id'); ?>" /></td>
+						<td width='200'>Pemesanan Masakan Id <?php echo form_error('pemesanan_masakan_id') ?></td><td><input type="text" class="form-control" name="pemesanan_masakan_id" id="pemesanan_masakan_id" placeholder="Pemesanan Masakan Id" value="<?php echo $pemesanan_masakan_id; ?>" /></td>
 					</tr>
 	
 					<tr>
-						<td width='200'>Id Users Kasir <?php echo form_error('id_users_kasir') ?></td>
-						<td>
-						<?php echo cmb_dinamis_user('id_users_kasir', 'tbl_user','kasir', 'full_name', 'id_users', $id_users_kasir,'DESC') ?>
-
-						</td>
+						<td width='200'>Id Users Kasir <?php echo form_error('id_users_kasir') ?></td><td><input type="text" class="form-control" name="id_users_kasir" id="id_users_kasir" placeholder="Id Users Kasir" value="<?php echo $this->session->userdata('id_users'); ?>" /></td>
 					</tr>
 	
 					<tr>
@@ -43,7 +43,26 @@
 	</section>
 </div>
 <script>
-$('#tanggal').datetimepicker({
-    format: 'YYYY-MM-DD hh:mm:ss'
-});
-</script>
+	$( document ).ready(function() {
+			$('#no_antrian').on('keypress', function() {
+            alert( this.value );
+
+                    $.ajax({
+                            url: '<?php echo base_url();?>index.php/pembayaran_pemesanan/get_data_pemesanan',
+                            type: 'POST',
+                            dataType: 'json',
+                            data: { 
+                                    'no_antrian':  this.value, 
+                                },
+                            success: function(response){
+                                console.log(response);
+
+                                $("#pemesanan_masakan_id").val("");
+
+                                $("#pemesanan_masakan_id").val(response.pemesanan_maakan_id);
+
+                            }
+                        });
+            });
+		});
+	</script>
