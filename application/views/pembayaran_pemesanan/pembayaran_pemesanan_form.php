@@ -66,3 +66,8 @@
             });
 		});
 	</script>
+<script>
+$('#tanggal').datetimepicker({
+    format: 'YYYY-MM-DD hh:mm:ss'
+});
+</script>
