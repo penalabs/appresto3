@@ -10,6 +10,7 @@ class Produksi_masakan extends CI_Controller
         parent::__construct();
         
         $this->load->model('Produksi_masakan_model');
+
         $this->load->library('form_validation');        
 	$this->load->library('datatables');
     }
@@ -18,10 +19,30 @@ class Produksi_masakan extends CI_Controller
     {
         $this->template->load('template','produksi_masakan/produksi_masakan_list');
     } 
+
+    public function listproduksi($detail_pemesanan_masakan_id)
+    
+    {
+        
+        $session_data = array(
+            'detail_pemesanan_masakan_id'  => $detail_pemesanan_masakan_id,
+        );
+        $this->session->set_userdata($session_data);
+        $this->template->load('template','produksi_masakan/produksi_masakan_list_produksi');
+    } 
     
     public function json() {
+
+        $detail_pemesanan_masakan_id=$this->input->post('detail_pemesanan_masakan_id',TRUE);
+        $detail_pemesanan_masakan_id=$this->session->userdata('detail_pemesanan_masakan_id');
         header('Content-Type: application/json');
-        echo $this->Produksi_masakan_model->json();
+        echo $this->Produksi_masakan_model->json($detail_pemesanan_masakan_id);
+    }
+
+    public function json2() {
+        
+        header('Content-Type: application/json');
+        echo $this->Produksi_masakan_model->json2();
     }
 
     public function read($id) 
@@ -61,6 +82,7 @@ class Produksi_masakan extends CI_Controller
     public function create_action() 
     {
         $this->_rules();
+        $detail_pemesanan_masakan_id=$this->session->userdata('detail_pemesanan_masakan_id');
 
         if ($this->form_validation->run() == FALSE) {
             $this->create();
@@ -75,7 +97,7 @@ class Produksi_masakan extends CI_Controller
 
             $this->Produksi_masakan_model->insert($data);
             $this->session->set_flashdata('message', 'Create Record Success 2');
-            redirect(site_url('produksi_masakan'));
+            redirect(site_url('produksi_masakan/listproduksi/'.$detail_pemesanan_masakan_id));
         }
     }
     
@@ -104,6 +126,7 @@ class Produksi_masakan extends CI_Controller
     public function update_action() 
     {
         $this->_rules();
+        $detail_pemesanan_masakan_id=$this->session->userdata('detail_pemesanan_masakan_id');
 
         if ($this->form_validation->run() == FALSE) {
             $this->update($this->input->post('produksi_masakan_id', TRUE));
@@ -118,21 +141,22 @@ class Produksi_masakan extends CI_Controller
 
             $this->Produksi_masakan_model->update($this->input->post('produksi_masakan_id', TRUE), $data);
             $this->session->set_flashdata('message', 'Update Record Success');
-            redirect(site_url('produksi_masakan'));
+            redirect(site_url('produksi_masakan/listproduksi/'.$detail_pemesanan_masakan_id));
         }
     }
     
     public function delete($id) 
     {
+        $detail_pemesanan_masakan_id=$this->session->userdata('detail_pemesanan_masakan_id');
         $row = $this->Produksi_masakan_model->get_by_id($id);
 
         if ($row) {
             $this->Produksi_masakan_model->delete($id);
             $this->session->set_flashdata('message', 'Delete Record Success');
-            redirect(site_url('produksi_masakan'));
+            redirect(site_url('produksi_masakan/listproduksi/'.$detail_pemesanan_masakan_id));
         } else {
             $this->session->set_flashdata('message', 'Record Not Found');
-            redirect(site_url('produksi_masakan'));
+            redirect(site_url('produksi_masakan/listproduksi/'.$detail_pemesanan_masakan_id));
         }
     }
 

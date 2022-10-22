@@ -13,7 +13,11 @@
 					</tr>
 	
 					<tr>
-						<td width='200'>Bahan Olahan Id <?php echo form_error('bahan_olahan_id') ?></td><td><input type="text" class="form-control" name="bahan_olahan_id" id="bahan_olahan_id" placeholder="Bahan Olahan Id" value="<?php echo $bahan_olahan_id; ?>" /></td>
+						<td width='200'>Bahan Olahan Id <?php echo form_error('bahan_olahan_id') ?></td>
+						<td>
+						<?php echo cmb_dinamis('bahan_olahan_id', 'bahan_olahan', 'nama_bahan', 'bahan_olahan_id', $bahan_olahan_id,'DESC') ?>
+
+						</td>
 					</tr>
 	
 					<tr>
@@ -21,11 +25,11 @@
 					</tr>
 	
 					<tr>
-						<td width='200'>Detail Pemesanan Masakan Id <?php echo form_error('detail_pemesanan_masakan_id') ?></td><td><input type="text" class="form-control" name="detail_pemesanan_masakan_id" id="detail_pemesanan_masakan_id" placeholder="Detail Pemesanan Masakan Id" value="<?php echo $detail_pemesanan_masakan_id; ?>" /></td>
+						<td width='200'>Detail Pemesanan Masakan Id <?php echo form_error('detail_pemesanan_masakan_id') ?></td><td><input type="text" class="form-control" name="detail_pemesanan_masakan_id" id="detail_pemesanan_masakan_id" placeholder="Detail Pemesanan Masakan Id" value="<?php echo $this->session->userdata('detail_pemesanan_masakan_id'); ?>" /></td>
 					</tr>
 	
 					<tr>
-						<td width='200'>Status <?php echo form_error('status') ?></td><td><input type="text" class="form-control" name="status" id="status" placeholder="Status" value="<?php echo $status; ?>" /></td>
+						<td width='200'>Status <?php echo form_error('status') ?></td><td><input type="text" class="form-control" name="status" id="status" placeholder="Status" value="antrian" /></td>
 					</tr>
 	
 					<tr>
@@ -42,3 +46,8 @@
 		</div>
 	</section>
 </div>
+<script>
+$('#tanggal').datetimepicker({
+    format: 'YYYY-MM-DD hh:mm:ss'
+});
+</script>

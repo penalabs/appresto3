@@ -112,7 +112,11 @@
                     },
                     processing: true,
                     serverSide: true,
-                    ajax: {"url": "produksi_masakan/json", "type": "POST"},
+                    ajax: {"url": "<?php echo base_url();?>index.php/produksi_masakan/json", "type": "POST",
+                        "data" : {
+                            "detail_pemesanan_masakan_id" : "<?php echo $this->session->userdata('detail_pemesanan_masakan_id');?>",
+                        }
+                    },
                     columns: [
                         {
                             "data": "produksi_masakan_id",
@@ -153,7 +157,7 @@
                     },
                     processing: true,
                     serverSide: true,
-                    ajax: {"url": "produksi_masakan/json2", "type": "POST"},
+                    ajax: {"url": "<?php echo base_url();?>index.php/produksi_masakan/json2", "type": "POST"},
                     columns: [
                         {
                             "data": "detail_pemesanan_masakan_id",

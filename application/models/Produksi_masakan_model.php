@@ -16,17 +16,31 @@ class Produksi_masakan_model extends CI_Model
     }
 
     // datatables
-    function json() {
+    function json($detail_pemesanan_masakan_id) {
         $this->datatables->select('produksi_masakan_id,produksi_masakan.tanggal,bahan_olahan_id,jumlah_bahan,produksi_masakan
-        .detail_pemesanan_masakan_id,nama_masakan,detial_pemesanan_masakan.jumlah_pesan,detial_pemesanan_masakan.status as status_masakan,produksi_masakan.status');
+        .detail_pemesanan_masakan_id,status');
         $this->datatables->from('produksi_masakan');
+        $this->datatables->where('detail_pemesanan_masakan_id', $detail_pemesanan_masakan_id);
         //add this line for join
         //$this->datatables->join('table2', 'produksi_masakan.field = table2.field');
-        $this->datatables->join('detial_pemesanan_masakan', 'detial_pemesanan_masakan.detail_pemesanan_masakan_id = produksi_masakan.detail_pemesanan_masakan_id', 'right');
-        $this->datatables->join('menu_masakan', 'detial_pemesanan_masakan.menu_masakan_id = menu_masakan.menu_masakan_id', 'left outer');
+       
         $this->datatables->add_column('action', anchor(site_url('produksi_masakan/read/$1'),'<i class="fa fa-eye" aria-hidden="true"></i>', array('class' => 'btn btn-danger btn-sm'))." 
             ".anchor(site_url('produksi_masakan/update/$1'),'<i class="fa fa-pencil-square-o" aria-hidden="true"></i>', array('class' => 'btn btn-danger btn-sm'))." 
                 ".anchor(site_url('produksi_masakan/delete/$1'),'<i class="fa fa-trash-o" aria-hidden="true"></i>','class="btn btn-danger btn-sm" onclick="javasciprt: return confirm(\'Are You Sure ?\')"'), 'produksi_masakan_id');
+        return $this->datatables->generate();
+    }
+
+    function json2() {
+        $this->datatables->select('detial_pemesanan_masakan.detail_pemesanan_masakan_id,pemesanan_masakan_id,detial_pemesanan_masakan.menu_masakan_id
+        ,detial_pemesanan_masakan.tanggal,detial_pemesanan_masakan.harga,jumlah_pesan,subtotal,detial_pemesanan_masakan.status');
+        $this->datatables->from('detial_pemesanan_masakan');
+        //add this line for join
+        //$this->datatables->join('table2', 'detial_pemesanan_masakan.field = table2.field');
+        $this->datatables->join('menu_masakan', 'detial_pemesanan_masakan.menu_masakan_id = menu_masakan.menu_masakan_id');
+        $this->datatables->add_column('action', anchor(site_url('produksi_detial_pemesanan_masakan/read/$1'),'<i class="fa fa-eye" aria-hidden="true"></i>', array('class' => 'btn btn-danger btn-sm'))." 
+            ".anchor(site_url('produksi_detial_pemesanan_masakan/update/$1'),'<i class="fa fa-pencil-square-o" aria-hidden="true"></i>', array('class' => 'btn btn-danger btn-sm'))." 
+            ".anchor(site_url('produksi_masakan/listproduksi/$1'),'<i class="fa fa-eye" aria-hidden="true"></i>','class="btn btn-warning btn-sm" onclick="javasciprt: return confirm(\'Are You Sure ?\')"')."
+                ".anchor(site_url('produksi_detial_pemesanan_masakan/delete/$1'),'<i class="fa fa-trash-o" aria-hidden="true"></i>','class="btn btn-danger btn-sm" onclick="javasciprt: return confirm(\'Are You Sure ?\')"'), 'detail_pemesanan_masakan_id');
         return $this->datatables->generate();
     }
 
