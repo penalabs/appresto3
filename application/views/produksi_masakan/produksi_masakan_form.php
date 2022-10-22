@@ -29,7 +29,18 @@
 					</tr>
 	
 					<tr>
-						<td width='200'>Status <?php echo form_error('status') ?></td><td><input type="text" class="form-control" name="status" id="status" placeholder="Status" value="antrian" /></td>
+						<?php
+						
+						if($status==="antrian"){
+							$status="produksi selesai";
+						}else if($status==""){
+							$status="antrian";
+						}
+						?>
+						
+						<td width='200'>Status <?php echo form_error('status') ?></td><td><input type="text" class="form-control" name="status" id="status" placeholder="Status" value="<?php echo $status;?>" /></td>
+						
+
 					</tr>
 	
 					<tr>
