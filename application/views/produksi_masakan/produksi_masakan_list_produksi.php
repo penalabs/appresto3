@@ -162,7 +162,7 @@
                         {
                             "data": "detail_pemesanan_masakan_id",
                             "orderable": false
-                        },{"data": "pemesanan_masakan_id"},{"data": "menu_masakan_id"},{"data": "tanggal"},{"data": "harga"},{"data": "jumlah_pesan"},{"data": "subtotal"},{"data": "status"},
+                        },{"data": "pemesanan_masakan_id"},{"data": "nama_masakan"},{"data": "tanggal"},{"data": "harga"},{"data": "jumlah_pesan"},{"data": "subtotal"},{"data": "status"},
                         {
                             "data" : "action",
                             "orderable": false,

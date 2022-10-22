@@ -10,9 +10,11 @@ class Produksi_masakan extends CI_Controller
         parent::__construct();
         
         $this->load->model('Produksi_masakan_model');
+        $this->load->model('Produksi_detial_pemesanan_masakan_model');
+        
 
         $this->load->library('form_validation');        
-	$this->load->library('datatables');
+	    $this->load->library('datatables');
     }
 
     public function index()
@@ -157,6 +159,20 @@ class Produksi_masakan extends CI_Controller
         } else {
             $this->session->set_flashdata('message', 'Record Not Found');
             redirect(site_url('produksi_masakan/listproduksi/'.$detail_pemesanan_masakan_id));
+        }
+    }
+
+    public function delete2($id) 
+    {
+        $row = $this->Produksi_detial_pemesanan_masakan_model->get_by_id($id);
+
+        if ($row) {
+            $this->Produksi_detial_pemesanan_masakan_model->delete($id);
+            $this->session->set_flashdata('message', 'Delete Record Success');
+            redirect(site_url('produksi_masakan/'));
+        } else {
+            $this->session->set_flashdata('message', 'Record Not Found');
+            redirect(site_url('produksi_masakan/'));
         }
     }
 

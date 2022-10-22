@@ -31,7 +31,7 @@ class Produksi_masakan_model extends CI_Model
     }
 
     function json2() {
-        $this->datatables->select('detial_pemesanan_masakan.detail_pemesanan_masakan_id,pemesanan_masakan_id,detial_pemesanan_masakan.menu_masakan_id
+        $this->datatables->select('detial_pemesanan_masakan.detail_pemesanan_masakan_id,pemesanan_masakan_id,menu_masakan.nama_masakan
         ,detial_pemesanan_masakan.tanggal,detial_pemesanan_masakan.harga,jumlah_pesan,subtotal,detial_pemesanan_masakan.status');
         $this->datatables->from('detial_pemesanan_masakan');
         //add this line for join
@@ -40,7 +40,7 @@ class Produksi_masakan_model extends CI_Model
         $this->datatables->add_column('action', anchor(site_url('produksi_detial_pemesanan_masakan/read/$1'),'<i class="fa fa-eye" aria-hidden="true"></i>', array('class' => 'btn btn-danger btn-sm'))." 
             ".anchor(site_url('produksi_detial_pemesanan_masakan/update/$1'),'<i class="fa fa-pencil-square-o" aria-hidden="true"></i>', array('class' => 'btn btn-danger btn-sm'))." 
             ".anchor(site_url('produksi_masakan/listproduksi/$1'),'<i class="fa fa-eye" aria-hidden="true"></i>','class="btn btn-warning btn-sm" onclick="javasciprt: return confirm(\'Are You Sure ?\')"')."
-                ".anchor(site_url('produksi_detial_pemesanan_masakan/delete/$1'),'<i class="fa fa-trash-o" aria-hidden="true"></i>','class="btn btn-danger btn-sm" onclick="javasciprt: return confirm(\'Are You Sure ?\')"'), 'detail_pemesanan_masakan_id');
+                ".anchor(site_url('produksi_masakan/delete2/$1'),'<i class="fa fa-trash-o" aria-hidden="true"></i>','class="btn btn-danger btn-sm" onclick="javasciprt: return confirm(\'Are You Sure ?\')"'), 'detail_pemesanan_masakan_id');
         return $this->datatables->generate();
     }
 

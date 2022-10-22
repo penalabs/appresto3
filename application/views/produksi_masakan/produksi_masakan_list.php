@@ -13,7 +13,7 @@
         
                         <div class="box-body">
                         <div style="padding-bottom: 10px;"'>
-                        <?php echo anchor(site_url('produksi_detial_pemesanan_masakan/create'), '<i class="fa fa-wpforms" aria-hidden="true"></i> Tambah Data', 'class="btn btn-danger btn-sm"'); ?>
+                        
                         <?php echo anchor(site_url('produksi_detial_pemesanan_masakan/excel'), '<i class="fa fa-file-excel-o" aria-hidden="true"></i> Export Ms Excel', 'class="btn btn-success btn-sm"'); ?>
                         <?php echo anchor(site_url('produksi_detial_pemesanan_masakan/word'), '<i class="fa fa-file-word-o" aria-hidden="true"></i> Export Ms Word', 'class="btn btn-primary btn-sm"'); ?></div>
                         <table class="table table-bordered table-striped" id="mytable2">
@@ -112,7 +112,7 @@
                     },
                     processing: true,
                     serverSide: true,
-                    ajax: {"url": "produksi_masakan/json", "type": "POST"},
+                    ajax: {"url": "<?php echo base_url();?>index.php/produksi_masakan/json", "type": "POST"},
                     columns: [
                         {
                             "data": "produksi_masakan_id",
@@ -158,7 +158,7 @@
                         {
                             "data": "detail_pemesanan_masakan_id",
                             "orderable": false
-                        },{"data": "pemesanan_masakan_id"},{"data": "menu_masakan_id"},{"data": "tanggal"},{"data": "harga"},{"data": "jumlah_pesan"},{"data": "subtotal"},{"data": "status"},
+                        },{"data": "pemesanan_masakan_id"},{"data": "nama_masakan"},{"data": "tanggal"},{"data": "harga"},{"data": "jumlah_pesan"},{"data": "subtotal"},{"data": "status"},
                         {
                             "data" : "action",
                             "orderable": false,
